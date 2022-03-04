@@ -24,6 +24,10 @@ namespace IdentityApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            //BURANIN ARASINA EKLEME YAPIYORUM
+            services.AddMvc();
+            //BURANIN ARASINA EKLEME YAPIYORUM
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,10 +45,13 @@ namespace IdentityApp
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
-
             app.UseAuthorization();
+
+            //BURANIN ARASINA EKLEME YAPIYORUM
+            app.UseStatusCodePages();
+            app.UseAuthentication();
+            //BURANIN ARASINA EKLEME YAPIYORUM
 
             app.UseEndpoints(endpoints =>
             {
