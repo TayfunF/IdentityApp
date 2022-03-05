@@ -31,7 +31,14 @@ namespace IdentityApp
             services.AddMvc();
             services.AddDbContext<AppIdentityDbContext>(
             options => options.UseSqlServer("name=ConnectionStrings:DefaultConnection").UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
-            services.AddIdentity<AppUser,AppRole>().AddEntityFrameworkStores<AppIdentityDbContext>();
+            services.AddIdentity<AppUser, AppRole>(options =>
+            {
+                options.Password.RequiredLength = 4; //Þifre en az 4 karakter olabilir.
+                options.Password.RequireNonAlphanumeric = false; //Þifrede * . ? gibi þeyler giremesin dedim.
+                options.Password.RequireLowercase = false; //Þifrede Küçük karakter girme zorunluluðunu kaldýrdým
+                options.Password.RequireUppercase = false; //Þifrede Büyük karakter girme zorunluluðunu kaldýrdým.
+                options.Password.RequireDigit = false; //0 dan 9 a kadar þifre giremesin dedim.
+            }).AddEntityFrameworkStores<AppIdentityDbContext>();
             //BURANIN ARASINA EKLEME YAPIYORUM
         }
 
