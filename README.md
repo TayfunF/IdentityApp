@@ -23,3 +23,5 @@
 #### 📚 Library Manager (LibMan)[Client Side Package Manager]
 - twitter-bootstrap
 - jquery
+- jquery-validation
+- jquery-validation-unobtrusive
