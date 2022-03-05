@@ -1,3 +1,4 @@
+using IdentityApp.CustomValidation;
 using IdentityApp.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -38,7 +39,7 @@ namespace IdentityApp
                 options.Password.RequireLowercase = false; //Þifrede Küçük karakter girme zorunluluðunu kaldýrdým
                 options.Password.RequireUppercase = false; //Þifrede Büyük karakter girme zorunluluðunu kaldýrdým.
                 options.Password.RequireDigit = false; //0 dan 9 a kadar þifre giremesin dedim.
-            }).AddEntityFrameworkStores<AppIdentityDbContext>();
+            }).AddPasswordValidator<CustomPasswordValidator>().AddEntityFrameworkStores<AppIdentityDbContext>();
             //BURANIN ARASINA EKLEME YAPIYORUM
         }
 
