@@ -27,7 +27,7 @@ namespace IdentityApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-
+            //---------------------------------------------------------------------------------------------------
             //BURANIN ARASINA EKLEME YAPIYORUM
             services.AddMvc();
             services.AddDbContext<AppIdentityDbContext>(
@@ -39,8 +39,13 @@ namespace IdentityApp
                 options.Password.RequireLowercase = false; //Þifrede Küçük karakter girme zorunluluðunu kaldýrdým
                 options.Password.RequireUppercase = false; //Þifrede Büyük karakter girme zorunluluðunu kaldýrdým.
                 options.Password.RequireDigit = false; //0 dan 9 a kadar þifre giremesin dedim.
+
+                options.User.RequireUniqueEmail = true; //E-posta adresi uniq olmalý dedim.
+                //UserName sadece þu karakterlerden oluþabilir dedim.
+                options.User.AllowedUserNameCharacters = "abcçdefgðhýijklmnoöpqrsþtuüvwxyzABCÇDEFGÐHIÝJKLMNOÖPQRSÞTUÜVWXYZ0123456789-._";
             }).AddPasswordValidator<CustomPasswordValidator>().AddEntityFrameworkStores<AppIdentityDbContext>();
             //BURANIN ARASINA EKLEME YAPIYORUM
+            //---------------------------------------------------------------------------------------------------
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,10 +66,12 @@ namespace IdentityApp
             app.UseRouting();
             app.UseAuthorization();
 
+            //---------------------------------------------------------------------------------------------------
             //BURANIN ARASINA EKLEME YAPIYORUM
             app.UseStatusCodePages();
             app.UseAuthentication();
             //BURANIN ARASINA EKLEME YAPIYORUM
+            //---------------------------------------------------------------------------------------------------
 
             app.UseEndpoints(endpoints =>
             {
