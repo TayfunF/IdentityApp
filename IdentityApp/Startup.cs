@@ -48,6 +48,7 @@ namespace IdentityApp
 
             }).AddPasswordValidator<CustomPasswordValidator>()
             .AddUserValidator<CustomUserValidator>()
+            .AddErrorDescriber<CustomIdentityErorDescriber>()
             .AddEntityFrameworkStores<AppIdentityDbContext>();
             //BURANIN ARASINA EKLEME YAPIYORUM
             //---------------------------------------------------------------------------------------------------

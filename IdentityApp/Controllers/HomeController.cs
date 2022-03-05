@@ -56,8 +56,7 @@ namespace IdentityApp.Controllers
                 appUser.UserName = userVM.UserName;
                 appUser.Email = userVM.Email;
                 //appUser.PhoneNumber = userVM.PhoneNumber;
-
-                if (userManager.Users.Any(x => x.PhoneNumber == userVM.PhoneNumber))
+                if (userManager.Users.Any(x => x.PhoneNumber == userVM.PhoneNumber) && userVM.PhoneNumber !=null)
                 {
                     ModelState.AddModelError("", "Bu telefon numarası zaten kayıtlı.");
                 }
