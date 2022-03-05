@@ -16,11 +16,13 @@ namespace IdentityApp.Controllers
         private readonly ILogger<HomeController> _logger;
 
         public UserManager<AppUser> userManager { get; }
+        public SignInManager<AppUser> signInManager { get; }
 
-        public HomeController(ILogger<HomeController> logger, UserManager<AppUser> userManager)
+        public HomeController(ILogger<HomeController> logger, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
         {
             _logger = logger;
             this.userManager = userManager;
+            this.signInManager = signInManager;
         }
 
         public IActionResult Index()
@@ -28,7 +30,7 @@ namespace IdentityApp.Controllers
             return View();
         }
 
-        
+
 
         //--------------------------------------------------------------------
         //ÜYE OL SAYFASI GET-POST METODUM
@@ -47,7 +49,7 @@ namespace IdentityApp.Controllers
                 appUser.UserName = userVM.UserName;
                 appUser.Email = userVM.Email;
                 //appUser.PhoneNumber = userVM.PhoneNumber;
-                if (userManager.Users.Any(x => x.PhoneNumber == userVM.PhoneNumber) && userVM.PhoneNumber !=null)
+                if (userManager.Users.Any(x => x.PhoneNumber == userVM.PhoneNumber) && userVM.PhoneNumber != null)
                 {
                     ModelState.AddModelError("", "Bu telefon numarası zaten kayıtlı.");
                 }
@@ -80,6 +82,40 @@ namespace IdentityApp.Controllers
         {
             return View();
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginVM loginVM)
+        {
+            if (ModelState.IsValid)
+            {
+                AppUser user = await userManager.FindByEmailAsync(loginVM.Email);
+
+                if (user != null)
+                {
+                    await signInManager.SignOutAsync(); //Çıkış yaptır ilk
+                    Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync(user, loginVM.Password, false, false); //Giriş Yaptır
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction("Index", "Member");
+                    }
+                }
+            }
+            else
+            {
+                ModelState.AddModelError(nameof(LoginVM.Email), "Kullanıcı adı ya da şifre yanlış !");
+            }
+            return View(loginVM);
+        }
+
+
+
+
+
+
+
+
+
+
 
 
 
