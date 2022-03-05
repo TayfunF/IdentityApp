@@ -2,6 +2,7 @@ using IdentityApp.CustomValidation;
 using IdentityApp.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -29,9 +30,27 @@ namespace IdentityApp
             services.AddControllersWithViews();
             //---------------------------------------------------------------------------------------------------
             //BURANIN ARASINA EKLEME YAPIYORUM
+            //Mvc Service
             services.AddMvc();
-            services.AddDbContext<AppIdentityDbContext>(
-            options => options.UseSqlServer("name=ConnectionStrings:DefaultConnection").UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
+            //DB Service
+            services.AddDbContext<AppIdentityDbContext>(options => options.UseSqlServer("name=ConnectionStrings:DefaultConnection").UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
+            //Cookiebuilder Service
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = new PathString("/Home/Login"); //Kullanýcý üye olmadan üyelerin eriþebildiði yere týklarsa Login'e yönlendir
+                //options.LogoutPath = new PathString("/Home/Logout"); //Çýkýþ Yap
+                options.Cookie = new CookieBuilder()
+                {
+                    Name = "MyBlog", //Cookie Adý
+                    HttpOnly = false, //Http olursa kabul etme
+                    SameSite = SameSiteMode.Lax,
+                    SecurePolicy = CookieSecurePolicy.SameAsRequest //Browsera istek Http ise Http ile al , Https ise Https ile al
+                };
+                options.SlidingExpiration = true; //Kullanýcý 3.5 gün sonta yani 4.gün sonra siteme istek yaparsa 7 gün daha oturumunu sakla
+                options.ExpireTimeSpan = TimeSpan.FromDays(7);
+                //options.AccessDeniedPath = new PathString("/Home/AccessDenied"); //Eriþim Reddedildi Sayfasý
+            });
+            //Identity Service
             services.AddIdentity<AppUser, AppRole>(options =>
             {
                 options.Password.RequiredLength = 4; //Þifre en az 4 karakter olabilir.
@@ -39,13 +58,10 @@ namespace IdentityApp
                 options.Password.RequireLowercase = false; //Þifrede Küçük karakter girme zorunluluðunu kaldýrdým
                 options.Password.RequireUppercase = false; //Þifrede Büyük karakter girme zorunluluðunu kaldýrdým.
                 options.Password.RequireDigit = false; //0 dan 9 a kadar þifre giremesin dedim.
-
                 options.User.RequireUniqueEmail = true; //E-posta adresi uniq olmalý dedim.
-
                 //https://docs.microsoft.com/tr-tr/dotnet/api/microsoft.aspnetcore.identity.useroptions.allowedusernamecharacters?view=aspnetcore-6.0
                 //UserName sadece þu karakterlerden oluþabilir dedim.
                 options.User.AllowedUserNameCharacters = "abcçdefgðhýijklmnoöpqrsþtuüvwxyzABCÇDEFGÐHIÝJKLMNOÖPQRSÞTUÜVWXYZ0123456789-._";
-
             }).AddPasswordValidator<CustomPasswordValidator>()
             .AddUserValidator<CustomUserValidator>()
             .AddErrorDescriber<CustomIdentityErorDescriber>()
