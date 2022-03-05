@@ -16,5 +16,8 @@ namespace IdentityApp.ViewModels
         [DataType (DataType.Password)]
         [MinLength(4,ErrorMessage ="Şifre en az 4 karakter olmalıdır !")]
         public string Password { get; set; }
+
+
+        public bool RememberMe { get; set; }
     }
 }

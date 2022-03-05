@@ -30,8 +30,6 @@ namespace IdentityApp.Controllers
             return View();
         }
 
-
-
         //--------------------------------------------------------------------
         //ÜYE OL SAYFASI GET-POST METODUM
         [HttpGet]
@@ -78,8 +76,9 @@ namespace IdentityApp.Controllers
         //--------------------------------------------------------------------
         //GİRİŞ YAP SAYFASI GET-POST METODUM
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult Login(string ReturnUrl)
         {
+            TempData["ReturnUrl"] = ReturnUrl;
             return View();
         }
 
@@ -93,9 +92,15 @@ namespace IdentityApp.Controllers
                 if (user != null)
                 {
                     await signInManager.SignOutAsync(); //Çıkış yaptır ilk
-                    Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync(user, loginVM.Password, false, false); //Giriş Yaptır
+                    //Eğer kullanıcı giriş yaparken 'Beni Hatırla' yı işaretlediyse 'Startup.cs' ye gidicek ve kullanıcının bilgilerini 60 gün tutacak.
+                    Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync(user, loginVM.Password, loginVM.RememberMe, false); //Giriş Yaptır
                     if (result.Succeeded)
                     {
+                        if (TempData["ReturnUrl"] != null)
+                        {
+                            return Redirect(TempData["ReturnUrl"].ToString());
+                        }
+
                         return RedirectToAction("Index", "Member");
                     }
                 }
