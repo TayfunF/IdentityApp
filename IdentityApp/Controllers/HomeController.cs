@@ -28,16 +28,7 @@ namespace IdentityApp.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        
 
         //--------------------------------------------------------------------
         //ÜYE OL SAYFASI GET-POST METODUM
@@ -88,6 +79,33 @@ namespace IdentityApp.Controllers
         public IActionResult Login()
         {
             return View();
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //MVC PROJE İLE GELDİ BURASI ÖNEMLİ DEĞİL
+
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

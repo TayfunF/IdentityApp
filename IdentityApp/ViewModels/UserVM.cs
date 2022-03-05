@@ -2,6 +2,7 @@
 
 namespace IdentityApp.ViewModels
 {
+    //REGISTER İÇİN KULLANDIM
     public class UserVM
     {
         [Display(Name = "Kullanıcı Adı :")]
