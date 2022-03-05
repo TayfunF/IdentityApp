@@ -30,26 +30,8 @@ namespace IdentityApp
             services.AddControllersWithViews();
             //---------------------------------------------------------------------------------------------------
             //BURANIN ARASINA EKLEME YAPIYORUM
-            //Mvc Service
-            services.AddMvc();
             //DB Service
             services.AddDbContext<AppIdentityDbContext>(options => options.UseSqlServer("name=ConnectionStrings:DefaultConnection").UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
-            //Cookiebuilder Service
-            services.ConfigureApplicationCookie(options =>
-            {
-                options.LoginPath = new PathString("/Home/Login"); //Kullanýcý üye olmadan üyelerin eriþebildiði yere týklarsa Login'e yönlendir
-                //options.LogoutPath = new PathString("/Home/Logout"); //Çýkýþ Yap
-                options.Cookie = new CookieBuilder()
-                {
-                    Name = "MyBlog", //Cookie Adý
-                    HttpOnly = false, //Http olursa kabul etme
-                    SameSite = SameSiteMode.Lax,
-                    SecurePolicy = CookieSecurePolicy.SameAsRequest //Browsera istek Http ise Http ile al , Https ise Https ile al
-                };
-                options.SlidingExpiration = true; //Kullanýcý 3.5 gün sonta yani 4.gün sonra siteme istek yaparsa 7 gün daha oturumunu sakla
-                options.ExpireTimeSpan = TimeSpan.FromDays(7);
-                //options.AccessDeniedPath = new PathString("/Home/AccessDenied"); //Eriþim Reddedildi Sayfasý
-            });
             //Identity Service
             services.AddIdentity<AppUser, AppRole>(options =>
             {
@@ -66,6 +48,24 @@ namespace IdentityApp
             .AddUserValidator<CustomUserValidator>()
             .AddErrorDescriber<CustomIdentityErorDescriber>()
             .AddEntityFrameworkStores<AppIdentityDbContext>();
+            //Cookiebuilder Service
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = new PathString("/Home/Login"); //Kullanýcý üye olmadan üyelerin eriþebildiði yere týklarsa Login'e yönlendir
+                //options.LogoutPath = new PathString("/Home/Logout"); //Çýkýþ Yap
+                options.Cookie = new CookieBuilder()
+                {
+                    Name = "MyBlog", //Cookie Adý
+                    HttpOnly = false, //Http olursa kabul etme
+                    SameSite = SameSiteMode.Lax,
+                    SecurePolicy = CookieSecurePolicy.SameAsRequest //Browsera istek Http ise Http ile al , Https ise Https ile al
+                };
+                options.SlidingExpiration = true; //Kullanýcý 3.5 gün sonta yani 4.gün sonra siteme istek yaparsa 7 gün daha oturumunu sakla
+                options.ExpireTimeSpan = TimeSpan.FromDays(7);
+                //options.AccessDeniedPath = new PathString("/Home/AccessDenied"); //Eriþim Reddedildi Sayfasý
+                //Mvc Service
+                services.AddMvc();
+            });
             //BURANIN ARASINA EKLEME YAPIYORUM
             //---------------------------------------------------------------------------------------------------
         }
