@@ -112,8 +112,25 @@ namespace IdentityApp.Controllers
             return View(loginVM);
         }
 
-
-
+        //--------------------------------------------------------------------
+        //ŞİFREMİ UNUTTUM SAYFASI GET-POST METODUM
+        [HttpGet]
+        public IActionResult ResetPassword()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult ResetPassword(PasswordResetVM passwordResetVM)
+        {
+            AppUser appUser = userManager.FindByEmailAsync(passwordResetVM.Email).Result;
+            if (appUser != null)
+            {
+                //User bilgilerinden oluşan bir token oluşturuyor.
+                string passwordResetToken = userManager.GeneratePasswordResetTokenAsync(appUser).Result;
+                //(Github da Ders 22 de ) Eposta gönderme kısmını yapıcam
+            }
+            return View();
+        }
 
 
 
