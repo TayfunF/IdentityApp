@@ -128,8 +128,21 @@ namespace IdentityApp.Controllers
                 //User bilgilerinden oluşan bir token oluşturuyor.
                 string passwordResetToken = userManager.GeneratePasswordResetTokenAsync(appUser).Result;
                 //(Github da Ders 22 de ) Eposta gönderme kısmını yapıcam
+                string passwordResetLink = Url.Action("ResetPasswordConfirm", "Home", new
+                {
+                    userId = appUser.Id,
+                    token = passwordResetToken
+                }, HttpContext.Request.Scheme);
+
+                Helper.PasswordResetHelper.PasswordResetSendEmail(passwordResetLink, appUser.Email);
+                ViewBag.status = "success";
             }
-            return View();
+            else
+            {
+                ModelState.AddModelError("", "Sistemde kayıtlı e-posta adresi bulunamadı !");
+            }
+
+            return View(passwordResetVM);
         }
 
 

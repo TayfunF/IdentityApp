@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,7 +48,8 @@ namespace IdentityApp
             }).AddPasswordValidator<CustomPasswordValidator>()
             .AddUserValidator<CustomUserValidator>()
             .AddErrorDescriber<CustomIdentityErorDescriber>()
-            .AddEntityFrameworkStores<AppIdentityDbContext>();
+            .AddEntityFrameworkStores<AppIdentityDbContext>()
+            .AddDefaultTokenProviders();
             //Cookiebuilder Service
             services.ConfigureApplicationCookie(options =>
             {
