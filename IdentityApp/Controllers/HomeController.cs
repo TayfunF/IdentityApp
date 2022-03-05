@@ -55,7 +55,13 @@ namespace IdentityApp.Controllers
                 AppUser appUser = new AppUser();
                 appUser.UserName = userVM.UserName;
                 appUser.Email = userVM.Email;
-                appUser.PhoneNumber = userVM.PhoneNumber;
+                //appUser.PhoneNumber = userVM.PhoneNumber;
+
+                if (userManager.Users.Any(x => x.PhoneNumber == userVM.PhoneNumber))
+                {
+                    ModelState.AddModelError("", "Bu telefon numarası zaten kayıtlı.");
+                }
+
                 //Şifreyi string olarak tutuyorum. Bunu Hash lemem lazım. O yüzden direk appUser ile almadım.
                 IdentityResult result = await userManager.CreateAsync(appUser, userVM.Password);
                 //Başarıyla kayıt olduysa Login ekranına gönder

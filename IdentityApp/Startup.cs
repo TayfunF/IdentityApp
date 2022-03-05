@@ -41,9 +41,14 @@ namespace IdentityApp
                 options.Password.RequireDigit = false; //0 dan 9 a kadar þifre giremesin dedim.
 
                 options.User.RequireUniqueEmail = true; //E-posta adresi uniq olmalý dedim.
+
+                //https://docs.microsoft.com/tr-tr/dotnet/api/microsoft.aspnetcore.identity.useroptions.allowedusernamecharacters?view=aspnetcore-6.0
                 //UserName sadece þu karakterlerden oluþabilir dedim.
                 options.User.AllowedUserNameCharacters = "abcçdefgðhýijklmnoöpqrsþtuüvwxyzABCÇDEFGÐHIÝJKLMNOÖPQRSÞTUÜVWXYZ0123456789-._";
-            }).AddPasswordValidator<CustomPasswordValidator>().AddEntityFrameworkStores<AppIdentityDbContext>();
+
+            }).AddPasswordValidator<CustomPasswordValidator>()
+            .AddUserValidator<CustomUserValidator>()
+            .AddEntityFrameworkStores<AppIdentityDbContext>();
             //BURANIN ARASINA EKLEME YAPIYORUM
             //---------------------------------------------------------------------------------------------------
         }
