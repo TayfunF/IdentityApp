@@ -126,6 +126,12 @@ namespace IdentityApp.Controllers
             return View(userVM);
         }
 
-
+        //--------------------------------------------------------------------
+        //KULLANICI BILGILERI GUNCELLEME SAYFASI GET-POST METODUM
+        //Starup.cs de tanimli oldugu icin void li yaptim.
+        public void Logout()
+        {
+            signInManager.SignOutAsync();
+        }
     }
 }

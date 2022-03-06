@@ -62,7 +62,7 @@ namespace IdentityApp
                     SecurePolicy = CookieSecurePolicy.SameAsRequest //Browsera istek Http ise Http ile al , Https ise Https ile al.
                 };
                 options.LoginPath = new PathString("/Home/Login"); //Kullanici uye olmadan üyelerin erisebildigi yere tiklarsa Login'e yonlendir.
-                options.LogoutPath = new PathString("/Member/Logout"); //Cikis Yap.
+                options.LogoutPath = new PathString("/Member/Logout"); //Cikis Yap. _MemberLayout.cshtl icinde cikisyap linkinde tanimladim.
                 options.SlidingExpiration = true; //Kullanici 30 gun sonra siteme istek yaparsa 60 gun daha oturumunu sakla.
                 options.ExpireTimeSpan = System.TimeSpan.FromDays(60);
                 options.AccessDeniedPath = new PathString("/Member/AccessDenied"); //Erisim Reddedildi Sayfasi
