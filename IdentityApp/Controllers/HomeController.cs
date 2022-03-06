@@ -91,7 +91,7 @@ namespace IdentityApp.Controllers
 
                 if (user != null)
                 {
-                    await signInManager.SignOutAsync(); //Cikis yaptir sonra giris yapsin
+                    //await signInManager.SignOutAsync(); //Cikis yaptir sonra giris yapsin
                     //Eger kullanici giris yaparken 'Beni Hatirla' yi isaretlediyse 'Startup.cs' ye gidicek ve kullanicinin bilgilerini 60 gun tutacak.
                     Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync(user, loginVM.Password, loginVM.RememberMe, false); //Giriş Yaptır
                     if (result.Succeeded)
@@ -104,11 +104,12 @@ namespace IdentityApp.Controllers
                         return RedirectToAction("Index", "Member");
                     }
                 }
+                else
+                {
+                    ModelState.AddModelError("", "Kullanıcı adı ya da şifre yanlış !");
+                }
             }
-            else
-            {
-                ModelState.AddModelError(nameof(LoginVM.Email), "Kullanıcı adı ya da şifre yanlış !");
-            }
+
             return View(loginVM);
         }
 
@@ -117,44 +118,81 @@ namespace IdentityApp.Controllers
         [HttpGet]
         public IActionResult ResetPassword()
         {
+            TempData["durum"] = null;
             return View();
         }
         [HttpPost]
         public IActionResult ResetPassword(PasswordResetVM passwordResetVM)
         {
-            AppUser appUser = userManager.FindByEmailAsync(passwordResetVM.Email).Result;
-            if (appUser != null)
+            if (TempData["durum"] == null)
             {
-                //User bilgilerinden olusan bir token olusturuyor.
-                string passwordResetToken = userManager.GeneratePasswordResetTokenAsync(appUser).Result;
-                //(Github da Ders 22 de ) Eposta gonderme kismini yapicam
-                string passwordResetLink = Url.Action("ResetPasswordConfirm", "Home", new
+                AppUser appUser = userManager.FindByEmailAsync(passwordResetVM.Email).Result;
+                if (appUser != null)
                 {
-                    userId = appUser.Id,
-                    token = passwordResetToken
-                }, HttpContext.Request.Scheme);
+                    //User bilgilerinden olusan bir token olusturuyor.
+                    string passwordResetToken = userManager.GeneratePasswordResetTokenAsync(appUser).Result;
+                    string passwordResetLink = Url.Action("ResetPasswordConfirm", "Home", new
+                    {
+                        userId = appUser.Id,
+                        token = passwordResetToken
+                    }, HttpContext.Request.Scheme);
 
-                Helper.PasswordResetHelper.PasswordResetSendEmail(passwordResetLink, appUser.Email);
-                ViewBag.status = "success";
+                    Helper.PasswordResetHelper.PasswordResetSendEmail(passwordResetLink, appUser.Email);
+                    ViewBag.status = "success";
+                    TempData["durum"] = true.ToString();
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Sistemde kayıtlı e-posta adresi bulunamadı !");
+                }
+                return View(passwordResetVM);
             }
             else
             {
-                ModelState.AddModelError("", "Sistemde kayıtlı e-posta adresi bulunamadı !");
+                return RedirectToAction("ResetPassword");
             }
-
-            return View(passwordResetVM);
         }
         //--------------------------------------------------------------------
         //SIFRE YENILEME SAYFASI GET-POST METODUM
+        [HttpGet]
         public IActionResult ResetPasswordConfirm(string userId, string token)
         {
             TempData["userId"] = userId;
             TempData["token"] = token;
-
-
             return View();
         }
 
+        //Bind => Modelimden kullanmak istedigim proplarim gelsin. Diger proplar gelmesin.
+        [HttpPost]
+        public async Task<IActionResult> ResetPasswordConfirm([Bind("PasswordNew")] PasswordResetVM passwordResetVM)
+        {
+            string userId = TempData["userId"].ToString();
+            string token = TempData["token"].ToString();
+            AppUser appUser = await userManager.FindByIdAsync(userId);
+
+            if (appUser != null)
+            {
+                IdentityResult result = await userManager.ResetPasswordAsync(appUser, token, passwordResetVM.PasswordNew);
+
+                if (result.Succeeded)
+                {
+                    await userManager.UpdateSecurityStampAsync(appUser); //Bunu yazmazsak kullanici eski sifresi ile dolanmaya devam eder.
+                    ViewBag.status = "success";
+                }
+                else
+                {
+                    foreach (var item in result.Errors)
+                    {
+                        ModelState.AddModelError("", item.Description);
+                    }
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Hata meydana geldi. Lütfen daha sonra tekrar deneyin !");
+            }
+            return View(passwordResetVM);
+        }
 
 
 
