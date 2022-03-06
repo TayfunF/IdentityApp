@@ -144,8 +144,16 @@ namespace IdentityApp.Controllers
 
             return View(passwordResetVM);
         }
+        //--------------------------------------------------------------------
+        //SIFRE YENILEME SAYFASI GET-POST METODUM
+        public IActionResult ResetPasswordConfirm(string userId, string token)
+        {
+            TempData["userId"] = userId;
+            TempData["token"] = token;
 
 
+            return View();
+        }
 
 
 
