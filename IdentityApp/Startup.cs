@@ -36,11 +36,11 @@ namespace IdentityApp
             //Identity Service
             services.AddIdentity<AppUser, AppRole>(options =>
             {
-                options.Password.RequiredLength = 4; //Þifre en az 4 karakter olabilir.
-                options.Password.RequireNonAlphanumeric = false; //Þifrede * . ? gibi þeyler giremesin dedim.
-                options.Password.RequireLowercase = false; //Þifrede Küçük karakter girme zorunluluðunu kaldýrdým
-                options.Password.RequireUppercase = false; //Þifrede Büyük karakter girme zorunluluðunu kaldýrdým.
-                options.Password.RequireDigit = false; //0 dan 9 a kadar þifre giremesin dedim.
+                options.Password.RequiredLength = 4; //Sifre en az 4 karakter olabilir.
+                options.Password.RequireNonAlphanumeric = false; //Sifrede * . ? gibi seyler giremesin dedim.
+                options.Password.RequireLowercase = false; //Sifrede Kucuk karakter girme zorunlulugunu kaldirdim.
+                options.Password.RequireUppercase = false; //Sifrede Buyuk karakter girme zorunlulugunu kaldirdim.
+                options.Password.RequireDigit = false; //0 dan 9 a kadar sifre giremesin dedim.
                 options.User.RequireUniqueEmail = true; //E-posta adresi uniq olmalý dedim.
                 //https://docs.microsoft.com/tr-tr/dotnet/api/microsoft.aspnetcore.identity.useroptions.allowedusernamecharacters?view=aspnetcore-6.0
                 //UserName sadece þu karakterlerden oluþabilir dedim.
@@ -53,18 +53,18 @@ namespace IdentityApp
             //Cookiebuilder Service
             services.ConfigureApplicationCookie(options =>
             {
-                options.LoginPath = new PathString("/Home/Login"); //Kullanýcý üye olmadan üyelerin eriþebildiði yere týklarsa Login'e yönlendir
-                //options.LogoutPath = new PathString("/Home/Logout"); //Çýkýþ Yap
+                options.LoginPath = new PathString("/Home/Login"); //Kullanici uye olmadan üyelerin erisebildigi yere tiklarsa Login'e yonlendir.
+                //options.LogoutPath = new PathString("/Home/Logout"); //Cikis Yap.
                 options.Cookie = new CookieBuilder()
                 {
-                    Name = "MyBlog", //Cookie Adý
+                    Name = "MyBlog", //Cookie Adi
                     HttpOnly = false, //Http olursa kabul etme
                     SameSite = SameSiteMode.Lax,
-                    SecurePolicy = CookieSecurePolicy.SameAsRequest //Browsera istek Http ise Http ile al , Https ise Https ile al
+                    SecurePolicy = CookieSecurePolicy.SameAsRequest //Browsera istek Http ise Http ile al , Https ise Https ile al.
                 };
-                options.SlidingExpiration = true; //Kullanýcý 3.5 gün sonta yani 4.gün sonra siteme istek yaparsa 7 gün daha oturumunu sakla
+                options.SlidingExpiration = true; //Kullanici 3.5 gün sonra yani 4.gun sonra siteme istek yaparsa 7 gun daha oturumunu sakla.
                 options.ExpireTimeSpan = TimeSpan.FromDays(7);
-                //options.AccessDeniedPath = new PathString("/Home/AccessDenied"); //Eriþim Reddedildi Sayfasý
+                //options.AccessDeniedPath = new PathString("/Home/AccessDenied"); //Erisim Reddedildi Sayfasi
                 //Mvc Service
                 services.AddMvc();
             });

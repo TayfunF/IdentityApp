@@ -4,7 +4,7 @@ namespace IdentityApp.CustomValidation
 {
     public class CustomIdentityErorDescriber : IdentityErrorDescriber
     {
-        //İNGİLİZCE OLARAK YAZAN MESAJLARIMI, TÜRKÇE YAPMAK İSTEDİKLERİMİ override edicem burda
+        //INGILIZCE OLARAK YAZAN MESAJLARI, TURKCE YAPMAK ISTEDIKLERIMI override edicem burda
 
         public override IdentityError InvalidUserName(string userName)
         {

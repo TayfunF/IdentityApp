@@ -31,7 +31,7 @@ namespace IdentityApp.Controllers
         }
 
         //--------------------------------------------------------------------
-        //ÜYE OL SAYFASI GET-POST METODUM
+        //UYE OL SAYFASI GET-POST METODUM
         [HttpGet]
         public IActionResult Register()
         {
@@ -74,7 +74,7 @@ namespace IdentityApp.Controllers
         }
 
         //--------------------------------------------------------------------
-        //GİRİŞ YAP SAYFASI GET-POST METODUM
+        //GIRIS YAP SAYFASI GET-POST METODUM
         [HttpGet]
         public IActionResult Login(string ReturnUrl)
         {
@@ -91,8 +91,8 @@ namespace IdentityApp.Controllers
 
                 if (user != null)
                 {
-                    await signInManager.SignOutAsync(); //Çıkış yaptır ilk
-                    //Eğer kullanıcı giriş yaparken 'Beni Hatırla' yı işaretlediyse 'Startup.cs' ye gidicek ve kullanıcının bilgilerini 60 gün tutacak.
+                    await signInManager.SignOutAsync(); //Cikis yaptir sonra giris yapsin
+                    //Eger kullanici giris yaparken 'Beni Hatirla' yi isaretlediyse 'Startup.cs' ye gidicek ve kullanicinin bilgilerini 60 gun tutacak.
                     Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync(user, loginVM.Password, loginVM.RememberMe, false); //Giriş Yaptır
                     if (result.Succeeded)
                     {
@@ -113,7 +113,7 @@ namespace IdentityApp.Controllers
         }
 
         //--------------------------------------------------------------------
-        //ŞİFREMİ UNUTTUM SAYFASI GET-POST METODUM
+        //SIFREMI UNUTTUM SAYFASI GET-POST METODUM
         [HttpGet]
         public IActionResult ResetPassword()
         {
@@ -125,9 +125,9 @@ namespace IdentityApp.Controllers
             AppUser appUser = userManager.FindByEmailAsync(passwordResetVM.Email).Result;
             if (appUser != null)
             {
-                //User bilgilerinden oluşan bir token oluşturuyor.
+                //User bilgilerinden olusan bir token olusturuyor.
                 string passwordResetToken = userManager.GeneratePasswordResetTokenAsync(appUser).Result;
-                //(Github da Ders 22 de ) Eposta gönderme kısmını yapıcam
+                //(Github da Ders 22 de ) Eposta gonderme kismini yapicam
                 string passwordResetLink = Url.Action("ResetPasswordConfirm", "Home", new
                 {
                     userId = appUser.Id,
@@ -166,7 +166,7 @@ namespace IdentityApp.Controllers
 
 
 
-        //MVC PROJE İLE GELDİ BURASI ÖNEMLİ DEĞİL
+        //MVC PROJE ILE GELDI BURASI ONEMLI DEGIL
 
         public IActionResult Privacy()
         {
