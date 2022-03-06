@@ -27,6 +27,11 @@ namespace IdentityApp.Controllers
 
         public IActionResult Index()
         {
+            if (User.Identity.IsAuthenticated) //Eğer kullanıcı Login işlemi yaptıysa Member/Index sayfasına gitsin dedim.
+            {
+                return RedirectToAction("Index", "Member");
+            }
+
             return View();
         }
 

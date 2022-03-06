@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Mapster;
 using IdentityApp.ViewModels;
+using System.Threading.Tasks;
 
 namespace IdentityApp.Controllers
 {
@@ -49,10 +50,12 @@ namespace IdentityApp.Controllers
                     IdentityResult result = userManager.ChangePasswordAsync(appUser, passwordChangeVM.PasswordOld, passwordChangeVM.PasswordNew).Result;
                     if (result.Succeeded)
                     {
-                        //userManager.UpdateSecurityStampAsync(appUser); // Bunu yazinca 30 dakika sonra kullanici otomatik cikis yapacak. 
-                        //Usttekini yapmak yerine => kullaniciya backend tarafinda cikis yaptirip giris yaptiricam
+                        // Bunu yazinca 30 dakika sonra kullanici otomatik cikis yapacak. 
+                        //kullaniciya backend tarafinda cikis yaptirip giris yaptiricam
+                        userManager.UpdateSecurityStampAsync(appUser);
                         signInManager.SignOutAsync();
                         signInManager.PasswordSignInAsync(appUser, passwordChangeVM.PasswordNew, true, false);
+
 
                         ViewBag.status = "success";
                     }
@@ -72,5 +75,57 @@ namespace IdentityApp.Controllers
             }
             return View(passwordChangeVM);
         }
+
+        //--------------------------------------------------------------------
+        //KULLANICI BILGILERI GUNCELLEME SAYFASI GET-POST METODUM
+        [HttpGet]
+        public IActionResult UserEdit()
+        {
+            AppUser appUser = userManager.FindByNameAsync(User.Identity.Name).Result;
+
+            UserVM userVM = appUser.Adapt<UserVM>(); //Mapster
+
+            return View(userVM);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UserEdit(UserVM userVM)
+        {
+            ModelState.Remove("Password"); //Bu alanda Sifre guncellemedigim icin Vm den gelen Passwordu kaldir.
+
+            if (ModelState.IsValid)
+            {
+                AppUser appUser = await userManager.FindByNameAsync(User.Identity.Name);
+                appUser.UserName = userVM.UserName;
+                appUser.PhoneNumber = userVM.PhoneNumber;
+                appUser.Email = userVM.Email;
+
+                //Kullanici bilgi guncellerken hatali girerse kontrol etmek icin
+                IdentityResult result = await userManager.UpdateAsync(appUser);
+
+                if (result.Succeeded)
+                {
+                    // Bunu yazinca 30 dakika sonra kullanici otomatik cikis yapacak. 
+                    //kullaniciya backend tarafinda cikis yaptirip giris yaptiricam
+                    await userManager.UpdateSecurityStampAsync(appUser);
+                    await signInManager.SignOutAsync();
+                    await signInManager.SignInAsync(appUser, true);
+
+
+                    ViewBag.status = "success";
+                }
+                else
+                {
+                    foreach (var item in result.Errors)
+                    {
+                        ModelState.AddModelError("", item.Description);
+                    }
+                }
+
+            }
+            return View(userVM);
+        }
+
+
     }
 }
