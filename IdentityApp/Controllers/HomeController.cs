@@ -103,13 +103,16 @@ namespace IdentityApp.Controllers
 
                         return RedirectToAction("Index", "Member");
                     }
+                    else
+                    {
+                        ModelState.AddModelError("", "Kullanıcı adı ya da şifre yanlış !");
+                    }
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Kullanıcı adı ya da şifre yanlış !");
+                    ModelState.AddModelError("", "Kullanıcı kaydı bulunamadı ! !");
                 }
             }
-
             return View(loginVM);
         }
 
