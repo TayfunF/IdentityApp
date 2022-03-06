@@ -91,7 +91,7 @@ namespace IdentityApp.Controllers
 
                 if (user != null)
                 {
-                    //await signInManager.SignOutAsync(); //Cikis yaptir sonra giris yapsin
+                    await signInManager.SignOutAsync(); //Cikis yaptir sonra giris yapsin
                     //Eger kullanici giris yaparken 'Beni Hatirla' yi isaretlediyse 'Startup.cs' ye gidicek ve kullanicinin bilgilerini 60 gun tutacak.
                     Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync(user, loginVM.Password, loginVM.RememberMe, false); //Giriş Yaptır
                     if (result.Succeeded)

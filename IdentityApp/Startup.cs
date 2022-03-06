@@ -51,22 +51,36 @@ namespace IdentityApp
             .AddEntityFrameworkStores<AppIdentityDbContext>()
             .AddDefaultTokenProviders();
             //Cookiebuilder Service
-            services.ConfigureApplicationCookie(options =>
+            //services.ConfigureApplicationCookie(options =>
+            //{
+            //    options.Cookie = new CookieBuilder()
+            //    {
+            //        Name = "MyBlog", //Cookie Adi
+            //        HttpOnly = false, //Http olursa kabul etme
+            //        SameSite = SameSiteMode.Lax,
+            //        SecurePolicy = CookieSecurePolicy.SameAsRequest //Browsera istek Http ise Http ile al , Https ise Https ile al.
+            //    };
+            //    options.LoginPath = new PathString("/Home/Login"); //Kullanici uye olmadan üyelerin erisebildigi yere tiklarsa Login'e yonlendir.
+            //    //options.LogoutPath = new PathString("/Home/Logout"); //Cikis Yap.
+            //    options.SlidingExpiration = true; //Kullanici 3.5 gün sonra yani 4.gun sonra siteme istek yaparsa 7 gun daha oturumunu sakla.
+            //    options.ExpireTimeSpan = TimeSpan.FromDays(7);
+            //    options.AccessDeniedPath = new PathString("/Home/AccessDenied"); //Erisim Reddedildi Sayfasi
+            //    //Mvc Service
+            //    services.AddMvc();
+            //});
+            CookieBuilder cookieBuilder = new CookieBuilder();
+            cookieBuilder.Name = "MyBlog";
+            cookieBuilder.HttpOnly = false;
+            cookieBuilder.SameSite = SameSiteMode.Lax;
+            cookieBuilder.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+            services.ConfigureApplicationCookie(opts =>
             {
-                options.LoginPath = new PathString("/Home/Login"); //Kullanici uye olmadan üyelerin erisebildigi yere tiklarsa Login'e yonlendir.
-                //options.LogoutPath = new PathString("/Home/Logout"); //Cikis Yap.
-                options.Cookie = new CookieBuilder()
-                {
-                    Name = "MyBlog", //Cookie Adi
-                    HttpOnly = false, //Http olursa kabul etme
-                    SameSite = SameSiteMode.Lax,
-                    SecurePolicy = CookieSecurePolicy.SameAsRequest //Browsera istek Http ise Http ile al , Https ise Https ile al.
-                };
-                options.SlidingExpiration = true; //Kullanici 3.5 gün sonra yani 4.gun sonra siteme istek yaparsa 7 gun daha oturumunu sakla.
-                options.ExpireTimeSpan = TimeSpan.FromDays(7);
-                //options.AccessDeniedPath = new PathString("/Home/AccessDenied"); //Erisim Reddedildi Sayfasi
-                //Mvc Service
-                services.AddMvc();
+                opts.LoginPath = new PathString("/Home/Login");
+                opts.LogoutPath = new PathString("/Member/LogOut");
+                opts.Cookie = cookieBuilder;
+                opts.SlidingExpiration = true;
+                opts.ExpireTimeSpan = System.TimeSpan.FromDays(60);
+                opts.AccessDeniedPath = new PathString("/Member/AccessDenied");
             });
             //BURANIN ARASINA EKLEME YAPIYORUM
             //---------------------------------------------------------------------------------------------------
