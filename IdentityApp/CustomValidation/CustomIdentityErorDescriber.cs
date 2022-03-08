@@ -8,7 +8,7 @@ namespace IdentityApp.CustomValidation
 
         public override IdentityError InvalidUserName(string userName)
         {
-            return new IdentityError() { Code = "InvalidUserName", Description = $"{userName} geçersizdir !" };
+            return new IdentityError() { Code = "InvalidUserName", Description = $"{userName} kullanıcı adı olarak alınamaz !" };
         }
 
         public override IdentityError DuplicateUserName(string userName)

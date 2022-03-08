@@ -14,20 +14,15 @@ using System.IO;
 namespace IdentityApp.Controllers
 {
     [Authorize]
-    public class MemberController : Controller
+    public class MemberController : BaseController
     {
-        public UserManager<AppUser> userManager { get; }
-        public SignInManager<AppUser> signInManager { get; }
-
-        public MemberController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        public MemberController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager) : base(userManager, signInManager)
         {
-            this.userManager = userManager;
-            this.signInManager = signInManager;
         }
 
         public IActionResult Index()
         {
-            AppUser appUser = userManager.FindByNameAsync(User.Identity.Name).Result;
+            AppUser appUser = CurrentUser;
             UserVM userVM = appUser.Adapt<UserVM>(); //Mapster Kutuphane Kullanimi
 
             return View(userVM);
@@ -46,7 +41,7 @@ namespace IdentityApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                AppUser appUser = userManager.FindByNameAsync(User.Identity.Name).Result; //Identity.Name DB den degil Cookie'den geliyor.
+                AppUser appUser = CurrentUser;
 
                 bool exist = userManager.CheckPasswordAsync(appUser, passwordChangeVM.PasswordOld).Result; //Eski sifresi var mi kontrol et
 
@@ -67,10 +62,7 @@ namespace IdentityApp.Controllers
                     else
                     {
                         //Hatalar varsa onlari gostersin diye
-                        foreach (var item in result.Errors)
-                        {
-                            ModelState.AddModelError("", item.Description);
-                        }
+                        AddModelError(result);
                     }
                 }
                 else
@@ -86,9 +78,9 @@ namespace IdentityApp.Controllers
         [HttpGet]
         public IActionResult UserEdit()
         {
-            AppUser appUser = userManager.FindByNameAsync(User.Identity.Name).Result;
-
-            UserVM userVM = appUser.Adapt<UserVM>(); //Mapster
+            AppUser appUser = CurrentUser;
+            //Mapster
+            UserVM userVM = appUser.Adapt<UserVM>();
             //Cinsiyeti Dropdown olarak almak için
             ViewBag.Gender = new SelectList(Enum.GetNames(typeof(Gender)));
             return View(userVM);
@@ -97,14 +89,14 @@ namespace IdentityApp.Controllers
         [HttpPost]
         public async Task<IActionResult> UserEdit(UserVM userVM, IFormFile userPicture)
         {
-            //Bu metod icinde Sifre guncelleme islemi yaptirmadigim icin Vm den gelen Passwordu kaldirdim.
-            ModelState.Remove("Password"); 
+            //Bu metod icinde Sifre guncelleme islemi yaptirmadigim icin Vm den gelen Password propunu kaldirdim.
+            ModelState.Remove("Password");
             //Cinsiyeti Dropdown olarak almak için
             ViewBag.Gender = new SelectList(Enum.GetNames(typeof(Gender)));
 
             if (ModelState.IsValid)
             {
-                AppUser appUser = await userManager.FindByNameAsync(User.Identity.Name);
+                AppUser appUser = CurrentUser;
 
                 //Bilgi Guncelleme Sayfasinda Kullanici resmini almak icin (Identity ile Alakasi Yok !!!)
                 if (userPicture != null && userPicture.Length > 0)
@@ -116,6 +108,10 @@ namespace IdentityApp.Controllers
                         await userPicture.CopyToAsync(stream);
                         appUser.Picture = "/UserImages/" + fileName;
                     }
+                }
+                if (userPicture == null)
+                {
+                    ViewBag.nopicture = "Fotoğraf Yok";
                 }
 
 
@@ -142,10 +138,7 @@ namespace IdentityApp.Controllers
                 }
                 else
                 {
-                    foreach (var item in result.Errors)
-                    {
-                        ModelState.AddModelError("", item.Description);
-                    }
+                    AddModelError(result);
                 }
 
             }

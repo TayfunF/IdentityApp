@@ -11,18 +11,11 @@ using System.Threading.Tasks;
 
 namespace IdentityApp.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public UserManager<AppUser> userManager { get; }
-        public SignInManager<AppUser> signInManager { get; }
-
-        public HomeController(ILogger<HomeController> logger, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        public HomeController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager) : base(userManager, signInManager)
         {
-            _logger = logger;
-            this.userManager = userManager;
-            this.signInManager = signInManager;
+
         }
 
         public IActionResult Index()
@@ -67,11 +60,7 @@ namespace IdentityApp.Controllers
                 //Eğer kullanıcının girdiği değerlerde bir hata varsa bu hatayı göster
                 else
                 {
-                    //Türkçeleştirmesi CustomValidation klasörü ile yapılacak
-                    foreach (IdentityError item in result.Errors)
-                    {
-                        ModelState.AddModelError("", item.Description);
-                    }
+                    AddModelError(result);
                 }
             }
 
@@ -189,10 +178,7 @@ namespace IdentityApp.Controllers
                 }
                 else
                 {
-                    foreach (var item in result.Errors)
-                    {
-                        ModelState.AddModelError("", item.Description);
-                    }
+                    AddModelError(result);
                 }
             }
             else
