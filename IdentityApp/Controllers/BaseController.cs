@@ -11,15 +11,17 @@ namespace IdentityApp.Controllers
 
         protected UserManager<AppUser> userManager { get; }
         protected SignInManager<AppUser> signInManager { get; }
+        protected RoleManager<AppRole> roleManager { get; }
 
         //User.Identity.Name DB den degil Cookie'den geliyor.
         protected AppUser CurrentUser => userManager.FindByNameAsync(User.Identity.Name).Result;
 
-        //ctor D.I
-        public BaseController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        //ctor D.I roleManager diger Controllerlarda patlamasın diye null verdim
+        public BaseController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, RoleManager<AppRole> roleManager=null)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
+            this.roleManager = roleManager;
         }
 
         //Hata İcin Kullanidigim metod. Turkcelestirmesi CustomValidation Klasorunde

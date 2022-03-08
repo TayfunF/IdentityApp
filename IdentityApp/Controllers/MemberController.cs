@@ -152,5 +152,10 @@ namespace IdentityApp.Controllers
         {
             signInManager.SignOutAsync();
         }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
     }
 }
