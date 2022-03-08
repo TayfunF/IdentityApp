@@ -5,6 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 using Mapster;
 using IdentityApp.ViewModels;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
+using IdentityApp.Enums;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace IdentityApp.Controllers
 {
@@ -84,21 +89,42 @@ namespace IdentityApp.Controllers
             AppUser appUser = userManager.FindByNameAsync(User.Identity.Name).Result;
 
             UserVM userVM = appUser.Adapt<UserVM>(); //Mapster
-
+            //Cinsiyeti Dropdown olarak almak için
+            ViewBag.Gender = new SelectList(Enum.GetNames(typeof(Gender)));
             return View(userVM);
         }
 
         [HttpPost]
-        public async Task<IActionResult> UserEdit(UserVM userVM)
+        public async Task<IActionResult> UserEdit(UserVM userVM, IFormFile userPicture)
         {
-            ModelState.Remove("Password"); //Bu alanda Sifre guncellemedigim icin Vm den gelen Passwordu kaldir.
+            //Bu metod icinde Sifre guncelleme islemi yaptirmadigim icin Vm den gelen Passwordu kaldirdim.
+            ModelState.Remove("Password"); 
+            //Cinsiyeti Dropdown olarak almak için
+            ViewBag.Gender = new SelectList(Enum.GetNames(typeof(Gender)));
 
             if (ModelState.IsValid)
             {
                 AppUser appUser = await userManager.FindByNameAsync(User.Identity.Name);
+
+                //Bilgi Guncelleme Sayfasinda Kullanici resmini almak icin (Identity ile Alakasi Yok !!!)
+                if (userPicture != null && userPicture.Length > 0)
+                {
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(userPicture.FileName);
+                    var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserImages", fileName);
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        await userPicture.CopyToAsync(stream);
+                        appUser.Picture = "/UserImages/" + fileName;
+                    }
+                }
+
+
                 appUser.UserName = userVM.UserName;
                 appUser.PhoneNumber = userVM.PhoneNumber;
                 appUser.Email = userVM.Email;
+                appUser.City = userVM.City;
+                appUser.BirthDay = userVM.BirthDay;
+                appUser.Gender = (int)userVM.Gender; //Enum oldugu icin int donusumu yaptim
 
                 //Kullanici bilgi guncellerken hatali girerse kontrol etmek icin
                 IdentityResult result = await userManager.UpdateAsync(appUser);

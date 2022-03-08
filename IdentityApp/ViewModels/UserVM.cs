@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using IdentityApp.Enums;
+using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace IdentityApp.ViewModels
 {
@@ -25,5 +27,18 @@ namespace IdentityApp.ViewModels
         [DataType(DataType.Password)]
         [MinLength(4, ErrorMessage = "Şifre en az 4 karakter olmalıdır !")]
         public string Password { get; set; }
+
+        [Display(Name = "Şehir :")]
+        public string City { get; set; }
+
+        [Display(Name = "Resim :")]
+        public string Picture { get; set; }
+
+        [Display(Name = "Doğum Tarihi :")]
+        [DataType(DataType.Date)]
+        public DateTime? BirthDay { get; set; }
+
+        [Display(Name = "Cinsiyet :")]
+        public Gender Gender { get; set; }
     }
 }
