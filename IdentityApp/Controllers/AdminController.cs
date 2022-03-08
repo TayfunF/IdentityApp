@@ -1,8 +1,10 @@
 ﻿using IdentityApp.Models;
 using IdentityApp.ViewModels;
+using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace IdentityApp.Controllers
 {
@@ -59,15 +61,51 @@ namespace IdentityApp.Controllers
         //--------------------------------------------------------------------
         //ROL SILME SAYFASI POST METODUM
         [HttpPost]
-        public IActionResult RoleDelete(string id)
+        public async Task<IActionResult> RoleDelete(string id)
         {
             AppRole role = roleManager.FindByIdAsync(id).Result;
 
             if (role != null)
             {
-                IdentityResult result = roleManager.DeleteAsync(role).Result;
+                await roleManager.DeleteAsync(role);
             }
             return RedirectToAction("Roles", "Admin");
         }
+
+        //--------------------------------------------------------------------
+        //ROL GUNCELLEME SAYFASI GET-POST METODUM
+        [HttpGet]
+        public IActionResult RoleUpdate(string id)
+        {
+            AppRole role = roleManager.FindByIdAsync(id).Result;
+
+            return View(role.Adapt<RoleVM>()); //Mapster AppRole-RoleVM eslestirdim
+        }
+        [HttpPost]
+        public IActionResult RoleUpdate(RoleVM roleVM)
+        {
+            AppRole role = roleManager.FindByIdAsync(roleVM.Id).Result;
+
+            if (role != null)
+            {
+                role.Name = roleVM.Name;
+
+                IdentityResult result = roleManager.UpdateAsync(role).Result;
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Roles", "Admin");
+                }
+                else
+                {
+                    AddModelError(result);
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Güncelleme işlemi başarısız");
+            }
+            return View(roleVM);
+        }
+
     }
 }
