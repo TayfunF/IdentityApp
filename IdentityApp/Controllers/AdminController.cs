@@ -32,7 +32,7 @@ namespace IdentityApp.Controllers
         }
 
         //--------------------------------------------------------------------
-        //UYE ROLU EKLEME SAYFASI GET-POST METODUM
+        //ROL OLUSTURMA SAYFASI GET-POST METODUM
         [HttpGet]
         public IActionResult RoleCreate()
         {
@@ -54,6 +54,20 @@ namespace IdentityApp.Controllers
                 AddModelError(result);
             }
             return View(roleVM);
+        }
+
+        //--------------------------------------------------------------------
+        //ROL SILME SAYFASI POST METODUM
+        [HttpPost]
+        public IActionResult RoleDelete(string id)
+        {
+            AppRole role = roleManager.FindByIdAsync(id).Result;
+
+            if (role != null)
+            {
+                IdentityResult result = roleManager.DeleteAsync(role).Result;
+            }
+            return RedirectToAction("Roles", "Admin");
         }
     }
 }
