@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace IdentityApp.CustomTagHelpers
 {
-    [HtmlTargetElement("td", Attributes = "user-roles")]
+    [HtmlTargetElement("td", Attributes = "user-roles")] 
     public class UserRolesName : TagHelper
     {
         public UserManager<AppUser> userManager { get; set; }
