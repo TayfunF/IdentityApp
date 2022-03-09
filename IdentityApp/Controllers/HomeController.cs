@@ -2,9 +2,6 @@
 using IdentityApp.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -50,11 +47,19 @@ namespace IdentityApp.Controllers
                     ModelState.AddModelError("", "Bu telefon numarası zaten kayıtlı.");
                 }
 
-                //Şifreyi string olarak tutuyorum. Bunu Hash lemem lazım. O yüzden direk appUser ile almadım.
+                //Şifreyi string olarak tutuyorum. Bunu Hash lemem lazim. O yuzden direkt appUser ile almadim.
                 IdentityResult result = await userManager.CreateAsync(appUser, userVM.Password);
-                //Başarıyla kayıt olduysa Login ekranına gönder
+                //Basariyla kayit olduysa eposta onayi icin beklesin Login ekranina gönder
                 if (result.Succeeded)
                 {
+                    string confirmationToken = userManager.GenerateEmailConfirmationTokenAsync(appUser).Result;
+                    string link = Url.Action("ConfirmEmail", "Home", new
+                    {
+                        userId = appUser.Id,
+                        token = confirmationToken
+                    }, protocol: HttpContext.Request.Scheme);
+                    Helper.EmailConfirmationHelper.EmailConfirmationSendEmail(link, appUser.Email);
+
                     return RedirectToAction("Login", "Home");
                 }
                 //Eğer kullanıcının girdiği değerlerde bir hata varsa bu hatayı göster
@@ -85,6 +90,14 @@ namespace IdentityApp.Controllers
 
                 if (user != null)
                 {
+
+                    //register sonrasi email onay durumu false ise kullaniciyi bilgilendiricem
+                    if (userManager.IsEmailConfirmedAsync(user).Result == false)
+                    {
+                        ModelState.AddModelError("", "E-posta adresinizi henüz onaylamadınız. Lütfen e-posta adresinizin gelen kutusunu kontrol ediniz");
+                        return View(loginVM);
+                    }
+
                     await signInManager.SignOutAsync(); //Cikis yaptir sonra giris yapsin
                     //Eger kullanici giris yaparken 'Beni Hatirla' yi isaretlediyse 'Startup.cs' ye gidicek ve kullanicinin bilgilerini 60 gun tutacak.
                     Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync(user, loginVM.Password, loginVM.RememberMe, false); //Giriş Yaptır
@@ -188,9 +201,24 @@ namespace IdentityApp.Controllers
             return View(passwordResetVM);
         }
 
+        //--------------------------------------------------------------------
+        //EMAIL ONAYLAMA SAYFASI GET-POST METODUM
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            var user = await userManager.FindByIdAsync(userId);
 
+            IdentityResult result = await userManager.ConfirmEmailAsync(user, token);
 
-
+            if (result.Succeeded)
+            {
+                ViewBag.status = "E-posta adresiniz onaylanmıştır. Giriş Yapabilirsiniz";
+            }
+            else
+            {
+                ViewBag.status = "Bir hata meydana geldi. Lütfen daha sonra tekrar deneyin";
+            }
+            return View();
+        }
 
 
 
