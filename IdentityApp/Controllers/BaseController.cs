@@ -13,7 +13,7 @@ namespace IdentityApp.Controllers
         protected SignInManager<AppUser> signInManager { get; }
         protected RoleManager<AppRole> roleManager { get; }
 
-        //User.Identity.Name DB den degil Cookie'den geliyor.
+        //User.Identity.Name , DB den degil Cookie'den geliyor.(Yani Login olan kullanicinin adi)
         protected AppUser CurrentUser => userManager.FindByNameAsync(User.Identity.Name).Result;
 
         //ctor D.I roleManager diger Controllerlarda patlamasın diye null verdim

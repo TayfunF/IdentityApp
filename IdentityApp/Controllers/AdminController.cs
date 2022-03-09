@@ -3,6 +3,7 @@ using IdentityApp.ViewModels;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -105,6 +106,62 @@ namespace IdentityApp.Controllers
                 ModelState.AddModelError("", "Güncelleme işlemi başarısız");
             }
             return View(roleVM);
+        }
+
+        //--------------------------------------------------------------------
+        //ROL ATAMA SAYFASI GET-POST METODUM
+        [HttpGet]
+        public IActionResult RoleAssign(string id)
+        {
+            //Post kisminda kullanmak icin aliyorum
+            TempData["user_id"] = id;
+            //Hangi id nin yanindaki rol ata adli butona tiklandiysa onu getirdim
+            AppUser appUser = userManager.FindByIdAsync(id).Result;
+            //View tarafinda kullaniciAdini gostermek icin yazdim
+            ViewBag.userName = appUser.UserName;
+            //AppRole veritabanimda kayitli olan rolleri cektim. DB de kac tane Rol varsa, //var roles = roleManager.Roles.ToList();
+            IQueryable<AppRole> roles = roleManager.Roles;
+            //Id sine tiklanan kullanici hangi rollere sahip liste olarak dondur ? //var userroles = userManager.GetRolesAsync(appUser);
+            List<string> userRoles = userManager.GetRolesAsync(appUser).Result as List<string>;
+
+            List<RoleAssignVM> listele = new List<RoleAssignVM>();
+
+            foreach (var item in roles)
+            {
+                //Bu VM yi Hem checkbox lari gosterebilmek icin hem de checkbox in isaretli olup olmadigini bilmek icin kullandim
+                RoleAssignVM r = new RoleAssignVM();
+                r.RoleId = item.Id;
+                r.RoleName = item.Name;
+                if (userRoles.Contains(item.Name))
+                {
+                    r.Exist = true;
+                }
+                else
+                {
+                    r.Exist = false;
+                }
+                listele.Add(r);
+            }
+            return View(listele);
+        }
+
+        [HttpPost]
+        public IActionResult RoleAssign(List<RoleAssignVM> roleAssignVM)
+        {
+            AppUser appUser = userManager.FindByIdAsync(TempData["user_id"].ToString()).Result;
+            //Bu metod icinde Ayni Sayfada Hem atama hem de atama islemini kaldirma yapmis oluyoruz.
+            foreach (var item in roleAssignVM)
+            {
+                if (item.Exist)
+                {
+                    userManager.AddToRoleAsync(appUser, item.RoleName).Wait(); //Async oldugu icin Wait() koydum
+                }
+                else
+                {
+                    userManager.RemoveFromRoleAsync(appUser, item.RoleName).Wait();
+                }
+            }
+            return RedirectToAction("Users", "Admin");
         }
 
     }

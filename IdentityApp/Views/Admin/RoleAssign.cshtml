@@ -1,0 +1,27 @@
+﻿@model List<RoleAssignVM>
+
+@{
+    ViewData["Title"] = "RoleAssign";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h3>Rol Atanacak Kullanıcı : (@ViewBag.userName)</h3>
+<hr />
+
+<form asp-action="RoleAssign" asp-controller="Admin" method="post">
+    <!-- Checkboxlardan bir list gonderebilmek icin foreach yerine for kullaniyorum -->
+    <!-- forach ile dondurunce MVC mimarisi bu checkboxlarin liste oldugunu anlayamiyor !!! -->
+    @for (var i = 0; i < Model.Count(); i++)
+    {
+        <div class="form-check">
+            <input asp-for="@Model[i].RoleId" type="hidden">
+            <input asp-for="@Model[i].RoleName" type="hidden">
+
+            <input asp-for="@Model[i].Exist" type="checkbox" class="form-check-input">
+            <label asp-for="@Model[i].RoleId" class="form-check-label">@Model[i].RoleName</label>
+        </div>
+    }
+    <br />
+    <input type="submit" class="btn btn-primary" value="Rol Ata"/>
+</form>
+
