@@ -8,14 +8,7 @@
 <h3 class="text-center">Kullanıcı Bilgileri</h3>
 <div class="row">
     <div class="col-md-3">
-        @if (Model.Picture == null)
-        {
-            <img src="~/UserImages/user.png" style="width:100%; height:150px;">
-        }
-        else
-        {
-            <img src="@Model.Picture" style="width:100%; height:200px;">
-        }
+        <img src="@Model.Picture" style="width:100%; height:200px;">
     </div>
     <div class="col-md-9">
         <table class="table table-bordered table-striped">
@@ -29,41 +22,55 @@
             </tr>
             <tr>
                 <th>Telefon No</th>
-                @if (Model.PhoneNumber == null)
-                {
-                    <td><small class="text-muted">Henüz Eklenmemiş</small></td>
-                }
-                else
-                {
-                    <td>@Model.PhoneNumber</td>
-                }
+                <td>
+                    @if (!String.IsNullOrEmpty(Model.PhoneNumber))
+                    {
+                        @Model.PhoneNumber
+                    }
+                    else
+                    {
+                        <span class="text-muted">Belirtilmemiş</span>
+                    }
+                </td>
             </tr>
             <tr>
                 <th>Doğum Tarihi</th>
-                @if (Model.BirthDay == null)
-                {
-                    <td><small class="text-muted">Henüz Eklenmemiş</small></td>
-                }
-                else
-                {
-                    <td>@Model.BirthDay.Value.ToShortDateString()</td>
-                }
-
+                <td>
+                    @if (Model.BirthDay != null)
+                    {
+                        @Model.BirthDay?.ToShortDateString()
+                    }
+                    else
+                    {
+                        <span class="text-muted">Belirtilmemiş</span>
+                    }
+                </td>
             </tr>
             <tr>
                 <th>Şehir</th>
-                @if (Model.City == null)
-                {
-                    <td><small class="text-muted">Henüz Eklenmemiş</small></td>
-                }
-                else
-                {
-                    <td>@Model.City</td>
-                }
+                <td>
+                    @if (!String.IsNullOrEmpty(Model.City))
+                    {
+                        @Model.City
+                    }
+                    else
+                    {
+                        <span class="text-muted">Belirtilmemiş</span>
+                    }
+                </td>
             </tr>
             <tr>
                 <th>Cinsiyet</th>
-                <td>@Model.Gender</td>
+                <td>
+                    @if (Model.Gender == 0)
+                    {
+                        <span class="text-muted">@Model.Gender</span>
+                    }
+                    else
+                    {
+                        @Model.Gender
+                    }
+                </td>
             </tr>
         </table>
     </div>

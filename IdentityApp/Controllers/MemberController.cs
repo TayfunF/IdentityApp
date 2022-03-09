@@ -109,11 +109,6 @@ namespace IdentityApp.Controllers
                         appUser.Picture = "/UserImages/" + fileName;
                     }
                 }
-                if (userPicture == null)
-                {
-                    ViewBag.nopicture = "Fotoğraf Yok";
-                }
-
 
                 appUser.UserName = userVM.UserName;
                 appUser.PhoneNumber = userVM.PhoneNumber;
