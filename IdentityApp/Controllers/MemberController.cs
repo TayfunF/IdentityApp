@@ -152,5 +152,21 @@ namespace IdentityApp.Controllers
         {
             return View();
         }
+
+        //--------------------------------------------------------------------
+        //SADECE EDITOR LERIN GIRECEGI SAYFA
+        [Authorize(Roles = "editor,admin")]
+        public IActionResult Editor()
+        {
+            return View();
+        }
+
+        //--------------------------------------------------------------------
+        //SADECE MANAGER LARIN GIRECEGI SAYFA
+        [Authorize(Roles = "manager,admin")]
+        public IActionResult Manager()
+        {
+            return View();
+        }
     }
 }

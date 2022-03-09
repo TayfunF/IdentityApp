@@ -24,7 +24,7 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Member" asp-action="Index">Ana Sayfa</a>
+                            <a class="nav-link text-dark" asp-controller="Member" asp-action="Index">Üye Ana Sayfa</a>
                         </li>
                     </ul>
                     <!--
@@ -39,7 +39,13 @@
                     -->
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="btn btn-info" asp-controller="Admin" asp-action="Index">Admin Ana Sayfa</a>
+                            <a class="btn btn-danger" asp-controller="Admin" asp-action="Index">Admin Ana Sayfa</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-warning" asp-controller="Member" asp-action="Manager">Manager Ana Sayfa</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-success" asp-controller="Member" asp-action="Editor">Editor Ana Sayfa</a>
                         </li>
                     </ul>
                 </div>
