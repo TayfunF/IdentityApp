@@ -32,6 +32,14 @@ namespace IdentityApp
             //BURANIN ARASINA EKLEME YAPIYORUM
             //DB Service
             services.AddDbContext<AppIdentityDbContext>(options => options.UseSqlServer("name=ConnectionStrings:DefaultConnection").UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
+
+            //Facebook Service
+            services.AddAuthentication().AddFacebook(options =>
+            {
+                options.AppId = Configuration["Authentication:Facebook:AppId"];
+                options.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
+            });
+
             //Identity Service
             services.AddIdentity<AppUser, AppRole>(options =>
             {
@@ -79,12 +87,12 @@ namespace IdentityApp
             app.UseDeveloperExceptionPage();
             app.UseStatusCodePages();
             app.UseStaticFiles();
-            
+
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
 
-            
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

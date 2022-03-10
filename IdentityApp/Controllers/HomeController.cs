@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace IdentityApp.Controllers
@@ -15,9 +16,10 @@ namespace IdentityApp.Controllers
 
         }
 
+        //Eğer kullanıcı Login işlemi yaptıysa Member/Index sayfasına gitsin dedim.
         public IActionResult Index()
         {
-            if (User.Identity.IsAuthenticated) //Eğer kullanıcı Login işlemi yaptıysa Member/Index sayfasına gitsin dedim.
+            if (User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Member");
             }
@@ -219,6 +221,96 @@ namespace IdentityApp.Controllers
             }
             return View();
         }
+
+        //--------------------------------------------------------------------
+        //FACEBOOK ILE GIRIS SAYFASI GET-POST METODUM
+        // Ornegin => Kullanici uyelerin erisebilecegi sayfaya tikladi ve sonrasinda Login ekranina geldi. (Uye olmadigi icin)
+        //Facebook ile giris yaptiktan sonra ben kullaniciyi erismeye calistigi sayfaya gondericem. Burdaki ReturnUrl anlami bu
+        public IActionResult FacebookLogin(string ReturnUrl)
+        {
+            //Kullanicinin facebooktaki islemleri bittikten sonra sayfaya geri gelecegi url yi belirtiyorum.
+            string RedirectUrl = Url.Action("ExternalResponse", "Home", new { ReturnUrl = ReturnUrl });
+            //Facebook ile girisle ilgili proplari hazirlama kodlari
+            var properties = signInManager.ConfigureExternalAuthenticationProperties("Facebook", RedirectUrl);
+            //ChanllangeResult icerisine ne alirsa , kullaniciyi oraya yonlendirir.
+            return new ChallengeResult("Facebook", properties);
+        }
+        //FACEBOOK GOOGLE MICROSOFT ICIN BU ACTIONMETODUM ORTAK OLACAK
+        //YANI => NEYLE GIRIS YAPTIRMAK ISTERSEM ilgili kod blogu icinde ExternalResponse metoduna gonderim yapmam yeterli
+        //Eger kullanici yonlendirme ile gelmeden , direkt olarak login sayfasina geldiyse onu anasayfaya yonlendirme icin "/" kullandim.
+        public async Task<IActionResult> ExternalResponse(string ReturnUrl = "/")
+        {
+            //Bana kullanicinin Login oldugu ile ilgili bazi bilgiler veriyor.
+            ExternalLoginInfo info = await signInManager.GetExternalLoginInfoAsync();
+            //Kullanici facebook ile login sayfasina gitti ama bilgilerini girmediyse diye kontrol yapiyorum
+            if (info == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            else
+            {
+                //2 Cesit SignInResult var. Namespace vermemin sebebi cakisman olmasin diye.
+                //Eger db de kullanici daha once login olmussa login islemi gerceklesecek
+                Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, true);
+                //Eger db de bu degerler yoksa bunlari kaydetmem lazim.(Yani ilk kez facebook ile login yapiyorsa gibi dusuneblirim)
+                if (result.Succeeded)
+                {
+                    return Redirect(ReturnUrl);
+                }
+                else
+                {
+                    AppUser user = new AppUser();
+                    user.Email = info.Principal.FindFirst(ClaimTypes.Email).Value;
+                    string ExternalUserId = info.Principal.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+                    if (info.Principal.HasClaim(x => x.Type == ClaimTypes.Name))
+                    {
+                        string userName = info.Principal.FindFirst(ClaimTypes.Name).Value;
+                        //userName den gelecek olan bosluklari - haline getir sonra kucuk harf yap sonuna da Guid ekle
+                        userName = userName.Replace(' ', '-').ToLower() + ExternalUserId.Substring(0, 5).ToString();
+                        user.UserName = userName;
+                    }
+                    else
+                    {
+                        user.UserName = info.Principal.FindFirst(ClaimTypes.Email).Value;
+                    }
+
+                    IdentityResult createResult = await userManager.CreateAsync(user);
+
+                    if (createResult.Succeeded)
+                    {
+                        //dbo.AspNetUsersLogins tablomu doldurmam lazim
+                        //Bunu yazmazsa IdentityApi bu kullanicinin facebooktan login oldugunu anlayamaz
+                        IdentityResult loginResult = await userManager.AddLoginAsync(user, info);
+
+                        if (loginResult.Succeeded)
+                        {
+                            await signInManager.SignInAsync(user, true);
+                            return Redirect(ReturnUrl);
+                        }
+                        else
+                        {
+                            AddModelError(loginResult);
+                        }
+                    }
+                    else
+                    {
+                        AddModelError(createResult);
+                    }
+                    return RedirectToAction("Error");
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
+
 
 
 
