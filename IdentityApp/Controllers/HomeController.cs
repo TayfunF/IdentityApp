@@ -2,6 +2,7 @@
 using IdentityApp.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
@@ -223,7 +224,7 @@ namespace IdentityApp.Controllers
         }
 
         //--------------------------------------------------------------------
-        //FACEBOOK ILE GIRIS SAYFASI GET-POST METODUM
+        //FACEBOOK ILE GIRIS SAYFASI METODUM
         // Ornegin => Kullanici uyelerin erisebilecegi sayfaya tikladi ve sonrasinda Login ekranina geldi. (Uye olmadigi icin)
         //Facebook ile giris yaptiktan sonra ben kullaniciyi erismeye calistigi sayfaya gondericem. Burdaki ReturnUrl anlami bu
         public IActionResult FacebookLogin(string ReturnUrl)
@@ -285,7 +286,10 @@ namespace IdentityApp.Controllers
 
                         if (loginResult.Succeeded)
                         {
-                            await signInManager.SignInAsync(user, true);
+                            //Alt satirdaki gibi yaparsak kullanicinin sosyal medya ile girip girmedigini anlayamam.(ama Kullansamda yanlislik olmaz)
+                            //await signInManager.SignInAsync(user, true);
+                            await signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, true);
+
                             return Redirect(ReturnUrl);
                         }
                         else
@@ -297,12 +301,19 @@ namespace IdentityApp.Controllers
                     {
                         AddModelError(createResult);
                     }
-                    return RedirectToAction("Error");
+                    //Hatalarin ne oldugunu liste seklinde al ErrorIdentity Sayfasina model olarak aldim
+                    List<string> errors = ModelState.Values.SelectMany(x => x.Errors).Select(y => y.ErrorMessage).ToList();
+
+                    return View("ErrorIdentity", errors);
                 }
             }
         }
 
-
+        //ERROR SAYFASI METODUM
+        public IActionResult ErrorIdentity()
+        {
+            return View();
+        }
 
 
 

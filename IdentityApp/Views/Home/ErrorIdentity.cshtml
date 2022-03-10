@@ -1,0 +1,16 @@
+﻿@model List<string>
+
+@{
+    ViewData["Title"] = "IdentityApp Hata";
+}
+
+<h2>Hata Meydana Geldi</h2>
+<hr />
+<div class="alert alert-danger">
+    <ul>
+        @foreach (var item in Model)
+        {
+            <li>@item</li>
+        }
+    </ul>
+</div>
