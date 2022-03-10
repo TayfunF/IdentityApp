@@ -225,8 +225,9 @@ namespace IdentityApp.Controllers
 
         //--------------------------------------------------------------------
         //FACEBOOK ILE GIRIS SAYFASI METODUM
-        // Ornegin => Kullanici uyelerin erisebilecegi sayfaya tikladi ve sonrasinda Login ekranina geldi. (Uye olmadigi icin)
+        //delevoper.facebook sitesinden key,value aldim
         //Facebook ile giris yaptiktan sonra ben kullaniciyi erismeye calistigi sayfaya gondericem. Burdaki ReturnUrl anlami bu
+        // Ornegin => Kullanici uyelerin erisebilecegi sayfaya tikladi ve sonrasinda Login ekranina geldi. (Uye olmadigi icin)
         public IActionResult FacebookLogin(string ReturnUrl)
         {
             //Kullanicinin facebooktaki islemleri bittikten sonra sayfaya geri gelecegi url yi belirtiyorum.
@@ -315,6 +316,13 @@ namespace IdentityApp.Controllers
             return View();
         }
 
+        public IActionResult GoogleLogin(string ReturnUrl)
+        {
+            string RedirectUrl = Url.Action("ExternalResponse", "Home", new { ReturnUrl = ReturnUrl });
+            var properties = signInManager.ConfigureExternalAuthenticationProperties("Google", RedirectUrl);
+
+            return new ChallengeResult("Google");
+        }
 
 
 

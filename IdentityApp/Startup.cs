@@ -39,6 +39,12 @@ namespace IdentityApp
                 options.AppId = Configuration["Authentication:Facebook:AppId"];
                 options.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
             });
+            //Google Service
+            services.AddAuthentication().AddGoogle(options =>
+            {
+                options.ClientId = Configuration["Authentication:Google:ClientID"];
+                options.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
+            });
 
             //Identity Service
             services.AddIdentity<AppUser, AppRole>(options =>
