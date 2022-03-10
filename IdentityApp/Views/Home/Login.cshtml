@@ -22,24 +22,25 @@
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="checkbox" asp-for="RememberMe"/> Beni Hatırla
+                <input type="checkbox" asp-for="RememberMe" /> Beni Hatırla
             </div>
             <div class="form-group">
                 <input type="submit" value="Giriş yap" class="btn btn-primary btn-block" />
             </div>
         </form>
-            <div class="row">
-                <div class="col-auto offset-3 offset-md-3">
-                    <a asp-action="FacebookLogin" asp-controller="Home" class="btn btn-info"><i class="fa fa-facebook"></i></a>
-                </div>
-                <div class="col-auto">
-                    <a asp-action="GoogleLogin" asp-controller="Home" class="btn btn-info"><i class="fa fa-google"></i></a>
-                </div>
-                <div class="col-auto">
-                    <a asp-action="MicrosoftLogin" asp-controller="Home" class="btn btn-info"><i class="fa fa-windows"></i></a>
-                </div>
+        <div class="row">
+            <div class="offset-4 offset-md-4"></div>
+            <div class="col-auto">
+                <a asp-action="FacebookLogin" asp-controller="Home" class="btn btn-outline-info"><i class="fa fa-facebook"></i></a>
             </div>
-            <a asp-action="ResetPassword" asp-controller="Home" class="btn btn-link">Şifremi Unuttum</a>
+            <div class="col-auto">
+                <a asp-action="GoogleLogin" asp-controller="Home" class="btn btn-outline-danger"><i class="fa fa-google"></i></a>
+            </div>
+            @*<div class="col-auto">
+                <a asp-action="MicrosoftLogin" asp-controller="Home" class="btn btn-info"><i class="fa fa-windows"></i></a>
+                </div>*@
+        </div>
+        <a asp-action="ResetPassword" asp-controller="Home" class="btn btn-link">Şifremi Unuttum</a>
     </div>
 </div>
 

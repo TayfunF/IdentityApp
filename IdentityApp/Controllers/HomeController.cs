@@ -316,6 +316,9 @@ namespace IdentityApp.Controllers
             return View();
         }
 
+        //--------------------------------------------------------------------
+        //GOOGLE ILE GIRIS SAYFASI METODUM
+        //console.developers.google sitesinden key,value aldim
         public IActionResult GoogleLogin(string ReturnUrl)
         {
             string RedirectUrl = Url.Action("ExternalResponse", "Home", new { ReturnUrl = ReturnUrl });
